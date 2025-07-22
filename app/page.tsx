@@ -10,9 +10,14 @@ import {
   Palette,
 } from "lucide-react"
 import Image from "next/image"
+
+// component imports 
 import Footer from "@/components/footer/footer"
 import Navbar from "@/components/nav/navbar"
 import Contact from "@/components/contact/contact"
+import SkillsSection from "@/components/skills/skillssection"
+import CertificationsSection from "@/components/certifications/certificationssection"
+import CallToAction from "@/components/cta/calltoaction"
 
 const projects = [
   {
@@ -76,9 +81,10 @@ const companies = [
   { name: "LinkedIn", logo: "/linkedin.png" }
 ]
 
+// Skills data
 const skills = {
-  frontend: ["HTML", "CSS", "JavaScript", "React", "Next.js", "WordPress", "TypeScript", "Tailwind CSS", "Bootstrap"],
-  backend: ["Node.js", "Django", "GitHub", "SQL", "MongoDB", "PostgreSQL"],
+  frontend: ["HTML", "CSS", "JavaScript", "React", "Next.js"],
+  backend: ["Node.js", "Django", "GitHub", "WordPress"],
   datascience: ["Python", "Spark", "NumPy", "Pandas", "Matplotlib", "Seaborn", "scikit-learn", "PyTorch"],
 }
 
@@ -96,8 +102,16 @@ const categories = [
 
 
 
+
 export default function Portfolio() {
   const [activeFilter, setActiveFilter] = useState("all");
+
+   const handleClick = (sectionId: string) => {
+          const element = document.getElementById(sectionId)
+          if (element) {
+              element.scrollIntoView({ behavior: "smooth" })
+          }
+      }
 
   // Filter projects
   const filteredProjects =
@@ -105,7 +119,7 @@ export default function Portfolio() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navbar />
+      <Navbar handleClick={handleClick} />
 
       <section className="min-h-screen flex items-center justify-center px-4 pt-20 relative overflow-hidden">
 
@@ -116,7 +130,7 @@ export default function Portfolio() {
               className="absolute opacity-20 animate-float"
               style={{
                 left: `${12 + index * 30}%`,
-                top: `${10}%`,
+                top: `${90}%`,
                 animationDelay: `${index * 0.8}s`,
                 animationDuration: `${3 + index * 0.5}s`,
               }}
@@ -153,34 +167,16 @@ export default function Portfolio() {
             </p>
           </div>
 
-          {/* Skills Badges */}
-          <div className="space-y-4">
-            <div className="flex flex-wrap justify-center gap-2">
-              <Badge variant="secondary" className="bg-blue-900/50 text-blue-300 hover:text-blue-600">
-                Web Development
-              </Badge>
-              {skills.frontend?.slice(0, 4).map((skill) => (
-                <Badge key={skill} variant="outline" className="border-gray-600 text-gray-300">
-                  {skill}
-                </Badge>
-              ))}
-              {skills.backend?.slice(0, 4).map((skill) => (
-                <Badge key={skill} variant="outline" className="border-gray-600 text-gray-300">
-                  {skill}
-                </Badge>
-              ))}
-            </div>
-            <div className="flex flex-wrap justify-center gap-2">
-              <Badge variant="secondary" className="bg-green-900/50 text-green-300 hover:text-green-800">
-                Data Science
-              </Badge>
-              {skills.datascience.slice(0, 6).map((skill) => (
-                <Badge key={skill} variant="outline" className="border-gray-600 text-gray-300 ">
-                  {skill}
-                </Badge>
-              ))}
-            </div>
-          </div>
+          
+        </div>
+      </section>
+
+      <section className="py-20 px-4 bg-gray-950">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">My Skills</h2>
+
+          {/* Skills Tabs */}
+          <SkillsSection />
         </div>
       </section>
 
@@ -243,6 +239,16 @@ export default function Portfolio() {
           </div>
         </div>
       </section>
+
+      {/* Certifications Section */}
+      <section className="py-20 px-4 bg-gray-950" id="certifications-section">
+        <div className="max-w-6xl mx-auto">
+          <CertificationsSection />
+        </div>
+      </section>
+
+      {/* Call to Action Section */}
+      <CallToAction handleClick={handleClick} />
 
       {/* Contact Me Section */}
       <Contact />

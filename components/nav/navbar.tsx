@@ -2,19 +2,12 @@
 import { useEffect, useState, useRef } from "react";
 import { Linkedin, Github, Instagram, MessageCircle } from "lucide-react";
 
-export default function Navbar() {
+export default function Navbar({handleClick}: { handleClick: (sectionId: string) => void }) {
 
-
-    const [headerVisible, setHeaderVisible] = useState(true)
+    const [headerVisible, setHeaderVisible] = useState(true);
     const lastScrollY = useRef(0)
 
 
-    const handleClick = (sectionId: string) => {
-        const element = document.getElementById(sectionId)
-        if (element) {
-            element.scrollIntoView({ behavior: "smooth" })
-        }
-    }
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY
@@ -81,6 +74,12 @@ export default function Navbar() {
                             className="hover:text-gray-300 transition-colors text-sm font-medium"
                         >
                             Projects
+                        </button>
+                        <button
+                            onClick={() => handleClick("certifications-section")}
+                            className="hover:text-gray-300 transition-colors text-sm font-medium"
+                        >
+                            Certs
                         </button>
                         <button
                             onClick={() => handleClick("contactme-section")}
