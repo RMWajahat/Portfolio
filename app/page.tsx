@@ -1,7 +1,12 @@
 "use client"
-import { useState, } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
+import { Search, X, ChevronDown } from "lucide-react"
 import {
   ArrowRight,
   Globe,
@@ -106,16 +111,41 @@ const categories = [
 export default function Portfolio() {
   const [activeFilter, setActiveFilter] = useState("all");
 
-   const handleClick = (sectionId: string) => {
-          const element = document.getElementById(sectionId)
-          if (element) {
-              element.scrollIntoView({ behavior: "smooth" })
-          }
-      }
+  const [searchQuery, setSearchQuery] = useState("")
+  const [showSearch, setShowSearch] = useState(false)
+  const [visibleProjectsCount, setVisibleProjectsCount] = useState(3)
+
+  const handleClick = (sectionId: string) => {
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" })
+    }
+  }
 
   // Filter projects
-  const filteredProjects =
-    activeFilter === "all" ? projects : projects.filter((project) => project.category === activeFilter)
+  const filteredProjects = projects.filter((project) => {
+    const matchesCategory = activeFilter === "all" || project?.category === activeFilter
+    const matchesSearch =
+      searchQuery === "" ||
+      new RegExp(searchQuery, "i").test(project?.title) ||
+      new RegExp(searchQuery, "i").test(project?.description) ||
+      project?.technologies.some((tech) => new RegExp(searchQuery, "i").test(tech))
+
+    return matchesCategory && matchesSearch
+  })
+
+  const visibleProjects = filteredProjects?.slice(0, visibleProjectsCount)
+  const hasMoreProjects = visibleProjectsCount < filteredProjects?.length
+
+  // Reset visible count when filter or search changes
+  useEffect(() => {
+    setVisibleProjectsCount(3)
+  }, [activeFilter, searchQuery])
+
+  const handleShowMoreProjects = () => {
+    setVisibleProjectsCount((prev) => prev + 3)
+  }
+
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -167,7 +197,7 @@ export default function Portfolio() {
             </p>
           </div>
 
-          
+
         </div>
       </section>
 
@@ -183,59 +213,132 @@ export default function Portfolio() {
       {/* Projects Section with Filters */}
       <section id="projects-section" className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-8">My Projects</h2>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold">My Projects</h2>
 
-          {/* Project Filters */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {categories.map((category) => {
-              const Icon = category.icon
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveFilter(category.id)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${activeFilter === category.id ? "bg-white text-black" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-                    }`}
-                >
-                  <Icon size={16} />
-                  <span className="text-sm font-medium">{category.label}</span>
-                </button>
-              )
-            })}
+            {/* Search and Filter Controls */}
+            <div className="flex items-center gap-4">
+              {/* Category Filter Dropdown */}
+              <Select value={activeFilter} onValueChange={setActiveFilter}>
+                <SelectTrigger className="w-48 bg-gray-800 border-gray-700 text-white">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-700">
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id} className="text-white">
+                      {category.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Search Toggle Button */}
+              <Button
+                onClick={() => setShowSearch(!showSearch)}
+                variant="outline"
+                size="sm"
+                className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
+              >
+                <Search size={16} />
+              </Button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project) => (
-              <Card
-                key={project.id}
-                className="bg-gray-900 border-gray-700 hover:border-gray-600 transition-all duration-300 hover:transform hover:scale-105"
-              >
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    <Image
-                      src={project.image || "/placeholder.svg"}
-                      alt={project.title}
-                      width={300}
-                      height={200}
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                    <div className="space-y-3">
-                      <div className="flex items-start justify-between">
-                        <h3 className="text-xl font-semibold text-white">{project.title}</h3>
-                        <ArrowRight className="text-gray-400 hover:text-white transition-colors" size={20} />
-                      </div>
-                      <p className="text-gray-300 text-sm">{project.description}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {project.technologies.map((tech) => (
-                          <Badge key={tech} variant="outline" className="border-gray-600 text-gray-400 text-xs">
-                            {tech}
-                          </Badge>
-                        ))}
+          {/* Search Bar */}
+          {showSearch && (
+            <div className="mb-6 transition-all duration-300">
+              <div className="relative max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                <Input
+                  type="text"
+                  placeholder="Search projects..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                />
+                {searchQuery && (
+                  <Button
+                    onClick={() => setSearchQuery("")}
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                  >
+                    <X size={14} />
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Projects Grid */}
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {visibleProjects.map((project) => (
+                <Card
+                  key={project.id}
+                  className="bg-gray-900 border-gray-700 hover:border-gray-600 transition-all duration-300 hover:transform hover:scale-105"
+                >
+                  <CardContent className="p-6">
+                    <div className="space-y-4">
+                      <Image
+                        src={project.image || "/placeholder.svg"}
+                        alt={project.title}
+                        width={300}
+                        height={200}
+                        className="w-full h-48 object-cover rounded-lg"
+                      />
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between">
+                          <h3 className="text-xl font-semibold text-white">{project.title}</h3>
+                          <ArrowRight className="text-gray-400 hover:text-white transition-colors" size={20} />
+                        </div>
+                        <p className="text-gray-300 text-sm">{project.description}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {project.technologies.map((tech) => (
+                            <Badge key={tech} variant="outline" className="border-gray-600 text-gray-400 text-xs">
+                              {tech}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* No Results Message */}
+            {filteredProjects.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-400">
+                  {searchQuery ? `No projects found matching "${searchQuery}"` : "No projects found in this category."}
+                </p>
+              </div>
+            )}
+
+            {/* Show More Button */}
+            {hasMoreProjects && (
+              <div className="text-center">
+                <Button
+                  onClick={handleShowMoreProjects}
+                  variant="outline"
+                  className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700 group"
+                >
+                  Show more <ChevronDown className="ml-2 h-4 w-4 group-hover:translate-y-1 transition-transform" />
+                </Button>
+              </div>
+            )}
+
+            {/* Projects Count */}
+            {filteredProjects.length > 0 && (
+              <div className="text-center">
+                <p className="text-gray-400 text-sm">
+                  Showing {Math.min(visibleProjectsCount, filteredProjects.length)} of {filteredProjects.length}{" "}
+                  projects
+                  {searchQuery && ` matching "${searchQuery}"`}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </section>
