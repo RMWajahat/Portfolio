@@ -6,113 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Award, ArrowLeft, ArrowRight, X } from "lucide-react";
 import Image from "next/image";
+import { certifications, certCategories, Certification } from "@/data";
 
 
 
 
 export default function CertificationsSection() {
-  const [selectedCert, setSelectedCert] = useState<(typeof certifications)[0] | null>(null)
+  const [selectedCert, setSelectedCert] = useState<Certification | null>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [activeCategory, setActiveCategory] = useState("all")
-
-
-//   Data
-const certifications = [
-  {
-    id: 1,
-    title: "AWS Certified Solutions Architect",
-    issuer: "Amazon Web Services",
-    date: "2024",
-    image: "/placeholder.svg?height=400&width=600&text=AWS+Certificate",
-    description: "Professional level certification for designing distributed systems on AWS",
-    category: "webdev",
-  },
-  {
-    id: 2,
-    title: "Google Data Analytics Professional",
-    issuer: "Google",
-    date: "2023",
-    image: "/placeholder.svg?height=400&width=600&text=Google+Analytics+Certificate",
-    description: "Comprehensive data analytics program covering data cleaning, analysis, and visualization",
-    category: "datascience",
-  },
-  {
-    id: 3,
-    title: "Meta Front-End Developer",
-    issuer: "Meta",
-    date: "2023",
-    image: "/placeholder.svg?height=400&width=600&text=Meta+Frontend+Certificate",
-    description: "Professional certificate program for front-end web development",
-    category: "webdev",
-  },
-  {
-    id: 4,
-    title: "Python for Data Science",
-    issuer: "IBM",
-    date: "2023",
-    image: "/placeholder.svg?height=400&width=600&text=IBM+Python+Certificate",
-    description: "Specialized program focusing on Python programming for data science applications",
-    category: "datascience",
-  },
-  {
-    id: 5,
-    title: "Machine Learning Specialization",
-    issuer: "Stanford University",
-    date: "2022",
-    image: "/placeholder.svg?height=400&width=600&text=Stanford+ML+Certificate",
-    description: "Advanced machine learning concepts and practical implementation",
-    category: "ml",
-  },
-  {
-    id: 6,
-    title: "Full Stack Web Development",
-    issuer: "freeCodeCamp",
-    date: "2022",
-    image: "/placeholder.svg?height=400&width=600&text=FreeCodeCamp+Certificate",
-    description: "Comprehensive full-stack development certification",
-    category: "webdev",
-  },
-  {
-    id: 7,
-    title: "Deep Learning Specialization",
-    issuer: "DeepLearning.AI",
-    date: "2022",
-    image: "/placeholder.svg?height=400&width=600&text=DeepLearning+Certificate",
-    description: "Advanced deep learning and neural networks certification",
-    category: "ml",
-  },
-  {
-    id: 8,
-    title: "Data Science Professional",
-    issuer: "IBM",
-    date: "2021",
-    image: "/placeholder.svg?height=400&width=600&text=IBM+DataScience+Certificate",
-    description: "Complete data science methodology and tools certification",
-    category: "datascience",
-  },
-  {
-    id: 9,
-    title: "React Developer Certification",
-    issuer: "Meta",
-    date: "2023",
-    image: "/placeholder.svg?height=400&width=600&text=React+Certificate",
-    description: "Advanced React development and best practices",
-    category: "webdev",
-  },
-]
-
-// Certificate categories
-const certCategories = [
-  { id: "all", label: "All Certificates" },
-  { id: "webdev", label: "Web Development" },
-  { id: "datascience", label: "Data Science" },
-  { id: "ml", label: "Machine Learning" },
-]
-
-
-
-
-
 
   // Filter certifications based on active category
   const filteredCertifications =
@@ -123,7 +25,7 @@ const certCategories = [
     setCurrentIndex(0)
   }, [activeCategory])
 
-  const handleCertClick = (cert: (typeof certifications)[0]) => {
+  const handleCertClick = (cert: Certification) => {
     setSelectedCert(cert)
   }
 
@@ -261,17 +163,17 @@ const certCategories = [
               <X className="text-white" size={24} />
             </button>
             <Image
-              src={selectedCert.image || "/placeholder.svg"}
-              alt={selectedCert.title}
+              src={selectedCert?.image || "/placeholder.svg"}
+              alt={selectedCert?.title}
               width={800}
               height={600}
               className="w-full h-auto rounded-lg"
             />
             <div className="p-6 bg-gray-900 text-white rounded-b-lg">
-              <h3 className="text-2xl font-bold mb-2">{selectedCert.title}</h3>
-              <p className="text-gray-300 mb-2">Issued by: {selectedCert.issuer}</p>
-              <p className="text-gray-300 mb-4">Date: {selectedCert.date}</p>
-              <p className="text-gray-200">{selectedCert.description}</p>
+              <h3 className="text-2xl font-bold mb-2">{selectedCert?.title}</h3>
+              <p className="text-gray-300 mb-2">Issued by: {selectedCert?.issuer}</p>
+              <p className="text-gray-300 mb-4">Date: {selectedCert?.date}</p>
+              <p className="text-gray-200">{selectedCert?.description}</p>
             </div>
           </div>
         </div>

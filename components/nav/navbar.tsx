@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState, useRef } from "react";
-import { Linkedin, Github, Instagram, MessageCircle } from "lucide-react";
+import { socialLinks, navigationLinks } from "@/data";
 
 export default function Navbar({handleClick}: { handleClick: (sectionId: string) => void }) {
 
@@ -33,60 +33,30 @@ export default function Navbar({handleClick}: { handleClick: (sectionId: string)
                 <div className="flex items-center space-x-8">
 
                     <div className="flex space-x-3">
-                        <a
-                            href="https://www.linkedin.com/in/muhammad-wajahat-hussain-0b5177225/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-blue-400 transition-colors p-2 rounded-full hover:bg-gray-800"
-                        >
-                            <Linkedin size={18} />
-                        </a>
-                        <a
-                            href="https://github.com/RMWajahat"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-gray-300 transition-colors p-2 rounded-full hover:bg-gray-800"
-                        >
-                            <Github size={18} />
-                        </a>
-                        <a
-                            href="https://instagram.com/web_habibi"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-pink-400 transition-colors p-2 rounded-full hover:bg-gray-800"
-                        >
-                            <Instagram size={18} />
-                        </a>
-                        <a
-                            href="https://wa.me/+923463336286"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-green-400 transition-colors p-2 rounded-full hover:bg-gray-800"
-                        >
-                            <MessageCircle size={18} />
-                        </a>
+                        {socialLinks.map((link) => (
+                            <a
+                                key={link.name}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`${link.hoverColor} transition-colors p-2 rounded-full hover:bg-gray-800`}
+                            >
+                                <link.icon size={18} />
+                            </a>
+                        ))}
                     </div>
 
                     {/* Navigation */}
                     <nav className="flex space-x-6">
-                        <button
-                            onClick={() => handleClick("projects-section")}
-                            className="hover:text-gray-300 transition-colors text-sm font-medium"
-                        >
-                            Projects
-                        </button>
-                        <button
-                            onClick={() => handleClick("certifications-section")}
-                            className="hover:text-gray-300 transition-colors text-sm font-medium"
-                        >
-                            Certs
-                        </button>
-                        <button
-                            onClick={() => handleClick("contactme-section")}
-                            className="hover:text-gray-300 transition-colors text-sm font-medium"
-                        >
-                            Contact
-                        </button>
+                        {navigationLinks.map((navLink) => (
+                            <button
+                                key={navLink.sectionId}
+                                onClick={() => handleClick(navLink.sectionId)}
+                                className="hover:text-gray-300 transition-colors text-sm font-medium"
+                            >
+                                {navLink.label}
+                            </button>
+                        ))}
                     </nav>
                 </div>
             </div>
